@@ -55,4 +55,5 @@ model VideoMetaData{
   id  Int @id @default(autoincrement())
   content Content @relation(fields: [contentId],references: [id])
   contentId Int @unique
+  url String
 }
