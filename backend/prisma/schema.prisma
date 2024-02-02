@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  name    String
+  email   String   @unique
+  role    String //admin or student
+  purchasedCourse UserCoursePurchase[]
+
+}
+
+model Course {
+  id Int  @id @default(autoincrement())
+  name String
+  description String
+  price Int
+  image String
+  purchaseBy UserCoursePurchase[]
+
+}
+
+model UserCoursePurchase{
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+  courseId Int
+  course Course @relation(fields: [courseId],references: [id])
+  assignedAt DateTime @default(now())
+
+  @@id([userId,courseId])
+}
+
+model Content{
+  id Int @id @default(autoincrement())
+  type String @default("folder")
+  name String
+  image String
+  parentId Int
+  parent Content? @relation("ContentToContent",fields: [parentId],references: [id]) 
+  children Content[] @relation("ContentToContent")
+  createdAt DateTime @default(now())
+  videoMetadata VideoMetaData?
+}
+
+model VideoMetaData{
+  id  Int @id @default(autoincrement())
+  content Content @relation(fields: [contentId],references: [id])
+  contentId Int @unique
+}
