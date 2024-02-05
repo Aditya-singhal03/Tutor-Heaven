@@ -13,6 +13,7 @@ datasource db {
 model User {
   id      Int      @id @default(autoincrement())
   name    String
+  password String
   email   String   @unique
   role    String //admin or student
   purchasedCourse UserCoursePurchase[]
@@ -24,8 +25,9 @@ model Course {
   name String
   description String
   price Int
-  image String
+  image String?
   purchaseBy UserCoursePurchase[]
+  contents Content[]
 
 }
 
@@ -43,8 +45,10 @@ model Content{
   id Int @id @default(autoincrement())
   type String @default("folder")
   name String
-  image String
-  parentId Int
+  image String?
+  courseId Int?
+  course Course? @relation(fields: [courseId],references: [id])
+  parentId Int?
   parent Content? @relation("ContentToContent",fields: [parentId],references: [id]) 
   children Content[] @relation("ContentToContent")
   createdAt DateTime @default(now())
